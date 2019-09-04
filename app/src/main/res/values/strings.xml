@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">StatsIt</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="action_settings">Settings</string>
+    <string name="hint_word">Word...</string>
+    <string name="button_save">Save</string>
+    <string name="empty_not_saved">Word not saved because it is empty.</string>
+    <string name="name_hint">name</string>
+    <string name="value_hint">value</string>
+    <string name="operation">sum</string>
+    <string name="operation_total">Total</string>
+    <string name="operation_mean">Mean</string>
+    <string name="operation_min">Min</string>
+    <string name="operation_max">Max</string>
+    <string name="dialog_delete_all_selected_items">Delete selected items?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">Cancel</string>
+    <string name="dialog_explanation">There is no undo!</string>
+    <string name="toast_no_input">No Input</string>
+    <string name="delete">DELETE</string>
+    <string name="edit">EDIT</string>
+    <string name="select_all">Select All</string>
+    <string name="delete_selected">Delete Selected</string>
+    <string name="deleted">Selected items deleted!</string>
+    <string name="nothing_happend">Nothing Happened</string>
+    <string name="dialog_choose_operation">Choose the operation you want to compute.</string>
+    <string name="dialog_explanation_stats">Let\'s see what results we get.</string>
+    <string name="dialog_fire_missiles">Fire missiles?</string>
+    <string name="fire">Fire</string>
+    <string name="cancel">Cancel</string>
+    <string name="pick_color">Choose a color</string>
+    <string name="total">Total</string>
+    <string name="min">Min</string>
+    <string name="max">Max</string>
+    <string name="mean">Mean</string>
+    <string name="median">Median</string>
+    <string name="count">Count</string>
+    <string name="percentage">Percentage</string>
+    <string name="pick_operation">Choose an operation:</string>
+    <string name="dialog_choose_percentage">Choose Percentage:</string>
+    <string name="add_a_list">+ add a list</string>
+    <string name="new_list_name">New List</string>
+    <array name="operations">
+        <item>@string/total</item>
+        <item>@string/min</item>
+        <item>@string/max</item>
+        <item>@string/mean</item>
+        <item>@string/count</item>
+        <item>@string/percentage</item>
+    </array>
+</resources>

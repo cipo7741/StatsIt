@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content">
+
+    <TextView
+            android:id="@+id/textView_recyclerview_item_left"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:padding="5dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="16dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/colorListText"
+            android:textStyle="italic"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toStartOf="@+id/textView_recyclerview_item_right"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+    />
+
+    <TextView
+            android:id="@+id/textView_recyclerview_item_right"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:padding="5dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="8dp"
+            android:singleLine="true"
+            android:text=""
+            android:textAlignment="textEnd"
+            android:textColor="@color/colorListText"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView_recyclerview_item_left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+    />
+
+    <View
+            android:id="@+id/view_recycleview_item_stroke_bottom"
+            android:background="@color/colorLine"
+            android:layout_height="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_width="fill_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_recyclerview_item_left"
+    />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
