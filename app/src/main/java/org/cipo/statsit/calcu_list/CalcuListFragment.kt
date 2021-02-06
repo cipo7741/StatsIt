@@ -301,6 +301,7 @@ class CalcuListFragment : Fragment(),
 
     private fun itemClicked(entry: Entry) {
         Toast.makeText(this.context, "Total: ${calculations["Total"]}", Toast.LENGTH_SHORT).show()
+
         entryViewModel.updateSelected(entry.id)
     }
 

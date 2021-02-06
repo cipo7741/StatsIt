@@ -13,16 +13,17 @@ import org.cipo.statsit.calcu_list.db.Entry
 import org.cipo.statsit.calcu_list.db.EntryRepository
 import org.cipo.statsit.calcu_list.db.EntryRoomDatabase
 
-class CalcuListByListNameViewModel(application: Application, currentList: String) : AndroidViewModel(application) {
+class CalcuListByListNameViewModel(application: Application, currentList: String) :
+    AndroidViewModel(application) {
 
     private val repository: EntryRepository
     val allEntries: LiveData<List<Entry>>
 
-        val countSelected: LiveData<Int>
-        val total: LiveData<Long>
-        val min: LiveData<Long>
-        val max: LiveData<Long>
-        val mean: LiveData<Long>
+    val countSelected: LiveData<Int>
+    val total: LiveData<Long>
+    val min: LiveData<Long>
+    val max: LiveData<Long>
+    val mean: LiveData<Long>
 
     init {
         val entryDao = EntryRoomDatabase.getDatabase(application, viewModelScope).entryDao()

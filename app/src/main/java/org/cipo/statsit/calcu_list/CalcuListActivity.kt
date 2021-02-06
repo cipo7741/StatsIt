@@ -3,6 +3,7 @@ package org.cipo.statsit.calcu_list
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
@@ -12,7 +13,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.Toast
-
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,15 +21,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.cipo.statsit.MainActivity
-
-import org.cipo.statsit.calcu_list.fragments.SaveFileDialogFragment
 import org.cipo.statsit.R
 import org.cipo.statsit.calcu_list.db.Entry
+import org.cipo.statsit.calcu_list.db.decodeIntAsString
 import org.cipo.statsit.calcu_list.db.encodeDoubleStringAsInt
 import org.cipo.statsit.calcu_list.fragments.CalculationFragment
 import org.cipo.statsit.calcu_list.fragments.ChooseCalculationDialogFragment
 import org.cipo.statsit.calcu_list.fragments.ChoosePercentageDialogFragment
-
+import org.cipo.statsit.calcu_list.fragments.SaveFileDialogFragment
 import java.io.File
 import java.io.FileOutputStream
 
@@ -63,7 +62,8 @@ class CalcuListActivity : AppCompatActivity(),
         /* toolbar */
         currentListName = intent.getStringExtra("item_id").orEmpty().ifEmpty { "Default List" }
         val toolbar = findViewById<Toolbar>(R.id.toolbar_calcu_list)
-        toolbar.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_calcu_list).setText(currentListName)
+        toolbar.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_calcu_list)
+            .setText(currentListName)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         /* keyboard visible */
@@ -79,11 +79,16 @@ class CalcuListActivity : AppCompatActivity(),
         val calculationFragment = CalculationFragment()
         calculationFragment.clickListener = { selectOperation() }
         calculationFragment.result =
-            calculations[currentOperationName] ?: error("no operation with name $currentOperationName")
+            calculations[currentOperationName]
+                ?: error("no operation with name $currentOperationName")
         calculationFragment.operation = currentOperationName
-        fragManager.beginTransaction().add(R.id.frame_layout_calculation_container, calculationFragment).commit()
+        fragManager.beginTransaction()
+            .add(R.id.frame_layout_calculation_container, calculationFragment).commit()
 
-        entryViewModel = ViewModelProvider(this, CalcuListViewModelFactory(application, currentListName)).get(CalcuListByListNameViewModel::class.java)
+        entryViewModel =
+            ViewModelProvider(this, CalcuListViewModelFactory(application, currentListName)).get(
+                CalcuListByListNameViewModel::class.java
+            )
 
         entryViewModel.allEntries.observe(this, Observer { entries ->
             entries?.reversed().let { adapter.setEntries(it as List<Entry>) }
@@ -96,18 +101,19 @@ class CalcuListActivity : AppCompatActivity(),
                 calculations["Mean"] = 0
                 calculations["Count"] = 0
                 calculationFragment.result =
-                    calculations[currentOperationName] ?: error("no operation with name $currentOperationName")
+                    calculations[currentOperationName]
+                        ?: error("no operation with name $currentOperationName")
                 calculationFragment.operation = currentOperationName
-                fragManager.beginTransaction().replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
+                fragManager.beginTransaction()
+                    .replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
             }
         })
-
 
 
         val editTextValue = findViewById<EditText>(R.id.edit_text_value)
         val textViewWord = findViewById<AutoCompleteTextView>(R.id.auto_complete_text_view_name)
 
-        if(currentListName.isNotBlank()){
+        if (currentListName.isNotBlank()) {
             Toast.makeText(this, currentListName, Toast.LENGTH_LONG).show()
             textViewWord.requestFocus()
         }
@@ -217,7 +223,7 @@ class CalcuListActivity : AppCompatActivity(),
 
 
     private fun allEntriesSelected() {
-        if (calculations["Count"]?.toInt() == countSelected) {
+        if (calculations["Count"]?.toInt() == (countSelected * 100)) {
             entryViewModel.updateSelectedAll()
         } else {
             entryViewModel.updateSelectedAllTrue()
@@ -233,12 +239,17 @@ class CalcuListActivity : AppCompatActivity(),
                 R.string.dialog_yes
             ) { _, _ ->
                 clearSelected()
-                Toast.makeText(applicationContext, getString(R.string.deleted), Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.deleted), Toast.LENGTH_LONG)
+                    .show()
             }
             .setNegativeButton(
                 R.string.dialog_no
             ) { _, _ ->
-                Toast.makeText(applicationContext, getString(R.string.nothing_happend), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.nothing_happend),
+                    Toast.LENGTH_LONG
+                ).show()
             }
             .show()
     }
@@ -249,7 +260,15 @@ class CalcuListActivity : AppCompatActivity(),
 
 
     private fun itemClicked(entry: Entry) {
-        Toast.makeText(this, "Total: ${calculations["Total"]}", Toast.LENGTH_SHORT).show()
+        /* word */
+        val textViewWord = findViewById<AutoCompleteTextView>(R.id.auto_complete_text_view_name)
+        textViewWord.text = SpannableStringBuilder(entry.word)
+        /* value */
+        val editTextValue = findViewById<EditText>(R.id.edit_text_value)
+        val value = entry.value?.let { decodeIntAsString(it, 2) }
+        editTextValue.text = SpannableStringBuilder(value)
+        editTextValue.requestFocus()
+        /* select */
         entryViewModel.updateSelected(entry.id)
     }
 
@@ -271,15 +290,19 @@ class CalcuListActivity : AppCompatActivity(),
         val calculationFragment = CalculationFragment()
         calculationFragment.clickListener = { selectOperation() }
         if (currentOperationName == "Percentage") {
-            val total = calculations["Total"] ?: error("no operation with name $currentOperationName")
+            val total =
+                calculations["Total"] ?: error("no operation with name $currentOperationName")
             calculationFragment.result = (total / 100) * currentPercent
             calculationFragment.operation = "$currentPercent %"
-            fragManager.beginTransaction().replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
+            fragManager.beginTransaction()
+                .replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
         } else {
             calculationFragment.result =
-                calculations[currentOperationName] ?: error("no operation with name $currentOperationName")
+                calculations[currentOperationName]
+                    ?: error("no operation with name $currentOperationName")
             calculationFragment.operation = currentOperationName
-            fragManager.beginTransaction().replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
+            fragManager.beginTransaction()
+                .replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
         }
     }
 
@@ -293,7 +316,7 @@ class CalcuListActivity : AppCompatActivity(),
         val internalFilesDirectory = context.filesDir
         try {
             val myFile = File(internalFilesDirectory, fileName)
-            if (!myFile.exists()){
+            if (!myFile.exists()) {
                 myFile.createNewFile()
             }
             Log.d("d", "\t\tCreated file: ${myFile.path}")
