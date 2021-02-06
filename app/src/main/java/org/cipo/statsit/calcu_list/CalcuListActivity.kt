@@ -17,7 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.cipo.statsit.MainActivity
@@ -61,7 +61,7 @@ class CalcuListActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calcu_list)
         /* toolbar */
-        currentListName = intent.getStringExtra("item_id")
+        currentListName = intent.getStringExtra("item_id").orEmpty().ifEmpty { "Default List" }
         val toolbar = findViewById<Toolbar>(R.id.toolbar_calcu_list)
         toolbar.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_calcu_list).setText(currentListName)
         setSupportActionBar(toolbar)
@@ -83,10 +83,7 @@ class CalcuListActivity : AppCompatActivity(),
         calculationFragment.operation = currentOperationName
         fragManager.beginTransaction().add(R.id.frame_layout_calculation_container, calculationFragment).commit()
 
-//        entryViewModel = ViewModelProviders.of(this, CalcuListViewModelFactory(CalcuListAllViewModel::class.java,currentListName).get(CalcuListAllViewModel::class.java)
-
-
-        entryViewModel =  ViewModelProviders.of(this, CalcuListViewModelFactory(application, currentListName)).get(CalcuListByListNameViewModel::class.java)
+        entryViewModel = ViewModelProvider(this, CalcuListViewModelFactory(application, currentListName)).get(CalcuListByListNameViewModel::class.java)
 
         entryViewModel.allEntries.observe(this, Observer { entries ->
             entries?.reversed().let { adapter.setEntries(it as List<Entry>) }

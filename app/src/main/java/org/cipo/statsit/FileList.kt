@@ -1,11 +1,13 @@
 package org.cipo.statsit
 
-import java.util.ArrayList
-import java.util.HashMap
 import android.util.Log
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.util.*
 
-class FileList(internalFilesDirectory : File) {
+class FileList(internalFilesDirectory: File) {
 
     /**
      * An array of file items.
@@ -15,7 +17,7 @@ class FileList(internalFilesDirectory : File) {
     /**
      * A map of sample items, by ID.
      */
-    val files_map: MutableMap<String, FileItem> = HashMap()
+    val filesMap: MutableMap<String, FileItem> = HashMap()
 
     init {
         try {
@@ -25,14 +27,16 @@ class FileList(internalFilesDirectory : File) {
             }
             Log.d("Files", "Path: $internalFilesDirectory")
             val files = internalFilesDirectory.listFiles()
-            Log.d("Files", "Size: " + files.size)
-            for (file in files) {
-                addItem(
-                    createFileItem(
-                        file
+            if (!files.isNullOrEmpty()) {
+                Log.d("Files", "Size: " + files.size)
+                for (file in files) {
+                    addItem(
+                        createFileItem(
+                            file
+                        )
                     )
-                )
-                Log.d("Files", "FileName:" + file.name)
+                    Log.d("Files", "FileName:" + file.name)
+                }
             }
         } catch (e: Exception) {
             Log.d("d", "Something went wrong!")
@@ -41,7 +45,7 @@ class FileList(internalFilesDirectory : File) {
 
     private fun addItem(item: FileItem) {
         files.add(item)
-        files_map[item.name] = item
+        filesMap[item.name] = item
     }
 
     private fun createFileItem(file: File): FileItem {
