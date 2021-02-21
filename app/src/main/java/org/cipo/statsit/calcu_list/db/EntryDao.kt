@@ -56,6 +56,9 @@ interface EntryDao {
     @Query("DELETE FROM entry_table where id =:entryID and list = :list")
     fun delete(entryID: Int, list: String)
 
+    @Query("UPDATE entry_table SET list = :newList where list = :oldList")
+    fun update(oldList: String, newList: String)
+
     @Query("DELETE FROM entry_table where selected = 1 and list = :list")
     fun deleteSelected(list: String)
 

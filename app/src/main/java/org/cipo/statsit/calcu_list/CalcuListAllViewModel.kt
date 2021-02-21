@@ -47,6 +47,10 @@ class CalcuListAllViewModel(application: Application) : AndroidViewModel(applica
         repository.deleteAll()
     }
 
+    fun update(list: String) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateList(list)
+    }
+
     fun updateSelected(entryId: Int) = viewModelScope.launch(Dispatchers.IO) {
         repository.updateSelected(entryId)
     }

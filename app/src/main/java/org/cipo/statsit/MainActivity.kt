@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.FrameLayout
-
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import org.cipo.statsit.calcu_list.CalcuListActivity
 import org.cipo.statsit.calcu_list.CalcuListFragment
+
 
 /**
  * An activity representing a list of Pings. This activity
@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         toolbar.title = title
 
 
-
         val itemDetailContainer = findViewById<FrameLayout>(R.id.item_detail_container)
         if (itemDetailContainer != null) {
             twoPane = true
@@ -45,15 +44,22 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("MainActivity", "\t\t${internalFilesDirectory.absolutePath}")
         recyclerViewItemList.adapter =
-            FileListAdapter(this, FileList(internalFilesDirectory).files, twoPane)
+            FileListAdapter(
+                this,
+                FileList(internalFilesDirectory).files,
+                twoPane
+            )
         val recyclerViewItemListAdapter = recyclerViewItemList.adapter
+
 
         val newCalcuListButton = findViewById<Button>(R.id.button_file_list)
         newCalcuListButton.setOnClickListener { view ->
             val intent = Intent(view.context, CalcuListActivity::class.java).apply {
                 if (recyclerViewItemListAdapter != null) {
-                    putExtra(CalcuListFragment.ARG_FILE_ID, "List "
-                            + recyclerViewItemListAdapter.itemCount)
+                    putExtra(
+                        CalcuListFragment.ARG_FILE_ID, "List "
+                                + recyclerViewItemListAdapter.itemCount
+                    )
                 }
             }
             view.context.startActivity(intent)

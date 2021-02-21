@@ -10,6 +10,7 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -217,10 +218,9 @@ class CalcuListFragment : Fragment(),
             try {
                 /* fill databate */
                 val value = encodeDoubleStringAsInt(entryRight, 2)
-                // TODO: get name of list
                 val toolbar = rootView.findViewById<Toolbar>(R.id.toolbar_calcu_list)
                 val autoCompleteTextListName =
-                    toolbar.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_calcu_list)
+                    toolbar.findViewById<TextView>(R.id.text_view_calcu_list_title)
                 val listName = autoCompleteTextListName.text.toString()
                 entryViewModel.insert(Entry(listName, entryLeft, value))
             } catch (e: NumberFormatException) {
@@ -234,10 +234,10 @@ class CalcuListFragment : Fragment(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> true
-            R.id.action_save -> {
-                saveAsCsv()
-                return true
-            }
+//            R.id.action_save -> {
+//                saveAsCsv()
+//                return true
+//            }
             R.id.action_delete_sweep -> {
                 clearSelectedWithApproval()
                 return true

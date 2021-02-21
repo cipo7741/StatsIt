@@ -34,24 +34,25 @@ class FileListAdapter internal constructor(
 //                    .replace(R.id.item_detail_container, fragment)
 //                    .commit()
 //            } else {
-                val intent = Intent(v.context, CalcuListActivity::class.java).apply {
-                    putExtra("item_id", item.name)
-//                    putExtra(CalcuListFragment.ARG_FILE_ID, item.name)
-                }
-                v.context.startActivity(intent)
+            val intent = Intent(v.context, CalcuListActivity::class.java).apply {
+                putExtra("item_id", item.name)
+            }
+            v.context.startActivity(intent)
 //            }
         }
     }
 
 
     inner class FileNameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        private val textViewCountPart: TextView = itemView.findViewById(R.id.item_detail)
-        private val textViewCountPart: TextView = itemView.findViewById(R.id.text_view_file_list_line_count)
-        private val textViewFilePart: TextView = itemView.findViewById(R.id.text_view_file_list_file_name)
+        private val textViewCountPart: TextView =
+            itemView.findViewById(R.id.text_view_file_list_line_count)
+        private val textViewFilePart: TextView =
+            itemView.findViewById(R.id.text_view_file_list_file_name)
 
         fun bind(item: FileList.FileItem) = with(itemView) {
-
-            textViewCountPart.text = item.lineCount.toString()
+            val itemsFound =
+                resources.getQuantityString(R.plurals.items, item.lineCount, item.lineCount)
+            textViewCountPart.text = itemsFound
             textViewFilePart.text = item.name
         }
     }
@@ -63,7 +64,6 @@ class FileListAdapter internal constructor(
 
     override fun onBindViewHolder(holder: FileNameViewHolder, position: Int) {
         holder.bind(values[position])
-
         with(holder.itemView) {
             tag = values[position]
             setOnClickListener(onClickListener)

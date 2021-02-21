@@ -3,7 +3,7 @@ package org.cipo.statsit.calcu_list.db
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 
-class EntryRepository(private val wordDao: EntryDao, private val currentList: String = "") {
+class EntryRepository(private val wordDao: EntryDao, private var currentList: String = "") {
 
     val allEntries: LiveData<List<Entry>> = if (currentList.isEmpty()) wordDao.getAllEntries() else wordDao.getAllEntries(currentList)
     val countSelected: LiveData<Int> = if (currentList.isEmpty()) wordDao.getCountSelected() else wordDao.getCountSelected(currentList)
@@ -30,6 +30,12 @@ class EntryRepository(private val wordDao: EntryDao, private val currentList: St
     @WorkerThread
     fun updateSelected(entryId: Int) {
         wordDao.updateSelected(entryId)
+    }
+
+    @WorkerThread
+    fun updateList(list: String) {
+        wordDao.update(currentList, list)
+        currentList = list
     }
 
     @WorkerThread

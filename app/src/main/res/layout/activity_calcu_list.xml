@@ -24,18 +24,18 @@
                 app:title="">
 
             <AutoCompleteTextView
-                    android:id="@+id/auto_complete_text_calcu_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/new_list_name"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text=""
-                    android:imeOptions="actionNext"
-                    android:selectAllOnFocus="true"
-                    android:nextFocusForward="@+id/auto_complete_text_view_name"
-            />
+                android:id="@+id/text_view_calcu_list_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/new_list_name"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text=""
+                android:imeOptions="actionDone"
+                android:selectAllOnFocus="true"
+                android:nextFocusForward="@+id/auto_complete_text_view_name"
+                />
 
         </androidx.appcompat.widget.Toolbar>
 

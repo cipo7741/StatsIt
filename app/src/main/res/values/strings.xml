@@ -13,6 +13,7 @@
     <string name="operation_min">Min</string>
     <string name="operation_max">Max</string>
     <string name="dialog_delete_all_selected_items">Delete selected items?</string>
+    <string name="dialog_delete_selected_list">Delete selected list?</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">Cancel</string>
     <string name="dialog_explanation">There is no undo!</string>
@@ -37,9 +38,15 @@
     <string name="count">Count</string>
     <string name="percentage">Percentage</string>
     <string name="pick_operation">Choose an operation:</string>
+    <string name="pick_list">Choose an operation:</string>
     <string name="dialog_choose_percentage">Choose Percentage:</string>
     <string name="add_a_list">+ add a list</string>
+    <string name="remove_a_list">- remove a list</string>
     <string name="new_list_name">New List</string>
+    <plurals name="items">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
     <array name="operations">
         <item>@string/total</item>
         <item>@string/min</item>

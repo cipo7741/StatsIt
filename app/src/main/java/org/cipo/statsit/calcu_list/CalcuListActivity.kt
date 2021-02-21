@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -62,11 +63,15 @@ class CalcuListActivity : AppCompatActivity(),
         /* toolbar */
         currentListName = intent.getStringExtra("item_id").orEmpty().ifEmpty { "Default List" }
         val toolbar = findViewById<Toolbar>(R.id.toolbar_calcu_list)
-        toolbar.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_calcu_list)
-            .setText(currentListName)
+        val toolbarEditTextViewWord =
+            findViewById<AutoCompleteTextView>(R.id.text_view_calcu_list_title)
+        toolbarEditTextViewWord.setText(currentListName)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         /* keyboard visible */
+        // Call Window.setDecorFitsSystemWindows(boolean) with false and
+        // install an View.OnApplyWindowInsetsListener on your root content view
+        // that fits insets of type WindowInsets.Type.ime().
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         /*list adapter*/
@@ -74,7 +79,6 @@ class CalcuListActivity : AppCompatActivity(),
         val adapter = CalcuListAdapter(this) { entry: Entry -> itemClicked(entry) }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-
         /* calculation on values with operation name and result */
         val calculationFragment = CalculationFragment()
         calculationFragment.clickListener = { selectOperation() }
@@ -84,16 +88,13 @@ class CalcuListActivity : AppCompatActivity(),
         calculationFragment.operation = currentOperationName
         fragManager.beginTransaction()
             .add(R.id.frame_layout_calculation_container, calculationFragment).commit()
-
         entryViewModel =
             ViewModelProvider(this, CalcuListViewModelFactory(application, currentListName)).get(
                 CalcuListByListNameViewModel::class.java
             )
-
         entryViewModel.allEntries.observe(this, Observer { entries ->
             entries?.reversed().let { adapter.setEntries(it as List<Entry>) }
             calculations["Count"] = (adapter.itemCount * 100).toLong()
-
             if (calculations["Count"] == 0L) {
                 calculations["Total"] = 0
                 calculations["Min"] = 0
@@ -108,16 +109,12 @@ class CalcuListActivity : AppCompatActivity(),
                     .replace(R.id.frame_layout_calculation_container, calculationFragment).commit()
             }
         })
-
-
         val editTextValue = findViewById<EditText>(R.id.edit_text_value)
         val textViewWord = findViewById<AutoCompleteTextView>(R.id.auto_complete_text_view_name)
-
         if (currentListName.isNotBlank()) {
             Toast.makeText(this, currentListName, Toast.LENGTH_LONG).show()
             textViewWord.requestFocus()
         }
-
         /* keyboard input "Enter" */
         editTextValue.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
@@ -130,35 +127,47 @@ class CalcuListActivity : AppCompatActivity(),
             }
             handled
         }
-
+        /* keyboard input "Enter" */
+        toolbarEditTextViewWord.setOnEditorActionListener { _, actionId, _ ->
+            var handled = false
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val newList = toolbarEditTextViewWord.text.toString()
+                entryViewModel.update(newList)
+                val oldList = currentListName
+                currentListName = toolbarEditTextViewWord.text.toString()
+                writeFile(currentListName, this)
+                deleteFile(oldList, this)
+                finish();
+                intent.putExtra(CalcuListFragment.ARG_FILE_ID, newList)
+                startActivity(getIntent());
+                handled = true
+            }
+            handled
+        }
         /* all them stats */
         entryViewModel.countSelected.observe(
             this, Observer { selected ->
                 countSelected = selected
             }
         )
-
         entryViewModel.total.observe(
             this, Observer { total ->
                 calculations["Total"] = total
                 updateFragment()
             }
         )
-
         entryViewModel.min.observe(
             this, Observer { min ->
                 calculations["Min"] = min
                 updateFragment()
             }
         )
-
         entryViewModel.max.observe(
             this, Observer { max ->
                 calculations["Max"] = max
                 updateFragment()
             }
         )
-
         entryViewModel.mean.observe(
             this, Observer { mean ->
                 calculations["Mean"] = mean
@@ -196,15 +205,19 @@ class CalcuListActivity : AppCompatActivity(),
             android.R.id.home -> {
                 navigateUpTo(Intent(this, MainActivity::class.java))
                 writeFile(currentListName, this)
-                true
-            }
-            R.id.action_settings -> true
-            R.id.action_save -> {
-                saveAsCsv()
                 return true
             }
+            R.id.action_settings -> true
+//            R.id.action_save -> {
+//                saveAsCsv()
+//                return true
+//            }
             R.id.action_delete_sweep -> {
                 clearSelectedWithApproval()
+                return true
+            }
+            R.id.action_delete_list -> {
+                clearAllWithApproval()
                 return true
             }
             R.id.action_select_all -> {
@@ -239,6 +252,7 @@ class CalcuListActivity : AppCompatActivity(),
                 R.string.dialog_yes
             ) { _, _ ->
                 clearSelected()
+
                 Toast.makeText(applicationContext, getString(R.string.deleted), Toast.LENGTH_LONG)
                     .show()
             }
@@ -254,8 +268,39 @@ class CalcuListActivity : AppCompatActivity(),
             .show()
     }
 
+
     private fun clearSelected() {
         entryViewModel.deleteSelected()
+    }
+
+    private fun clearAllWithApproval() {
+        AlertDialog.Builder(this)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setTitle(R.string.dialog_delete_all_selected_items)
+            .setMessage(R.string.dialog_explanation)
+            .setPositiveButton(
+                R.string.dialog_yes
+            ) { _, _ ->
+                clearAll()
+                Toast.makeText(applicationContext, getString(R.string.deleted), Toast.LENGTH_LONG)
+                    .show()
+            }
+            .setNegativeButton(
+                R.string.dialog_no
+            ) { _, _ ->
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.nothing_happend),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            .show()
+    }
+
+    private fun clearAll() {
+        entryViewModel.deleteAll()
+        deleteFile(currentListName, this)
+        navigateUpTo(Intent(this, MainActivity::class.java))
     }
 
 
@@ -331,9 +376,21 @@ class CalcuListActivity : AppCompatActivity(),
             out.flush()
             out.close()
         } catch (e: Exception) {
-            Log.d("d", "Something went wrong: ${e.message}!")
+            Log.d("d", "Something went wrong while writing to internal file: ${e.message}!")
             e.printStackTrace()
+        }
+    }
 
+    private fun deleteFile(fileName: String, context: Context) {
+        val internalFilesDirectory = context.filesDir
+        try {
+            val myFile = File(internalFilesDirectory, fileName)
+            if (myFile.exists()) {
+                myFile.delete()
+            }
+        } catch (e: Exception) {
+            Log.d("d", "Something went wrong while deleting the internal file: ${e.message}!")
+            e.printStackTrace()
         }
     }
 
